@@ -1,0 +1,9 @@
+[project]
+name = "pykrotik"
+version = "0.0.1"
+dependencies = [
+    "pydantic"
+]
+
+[project.optional-dependencies]
+dev = ["twine"]
