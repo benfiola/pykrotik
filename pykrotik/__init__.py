@@ -69,12 +69,24 @@ class BaseIpFirewallFilter(BaseModel):
     comment: str = pydantic.Field(default="")
     # flag that dictates whether an ip firewall filter is active
     disabled: bool = pydantic.Field(default=False)
+    # dst address for the firewall fitler
+    dst_address: str | None = pydantic.Field(default=None, alias=str("dst-address"))
+    # dst address list for the firewall fitler
+    dst_address_list: str | None = pydantic.Field(
+        default=None, alias=str("dst-address-list")
+    )
     # the id for an ip firewall filter (NOTE: prefixed with '*')
     id: str | None = pydantic.Field(default=None, alias=str(".id"))
     # flag that dictates whether filter is logged
     log: bool = pydantic.Field(default=False)
     # log prefix for logged filter
     log_prefix: str = pydantic.Field(default="", alias=str("log-prefix"))
+    # src address for the firewall fitler
+    src_address: str | None = pydantic.Field(default=None, alias=str("src-address"))
+    # src address list for the firewall fitler
+    src_address_list: str | None = pydantic.Field(
+        default=None, alias=str("src-address-list")
+    )
 
 
 class IpFirewallAcceptFilter(BaseIpFirewallFilter):
@@ -712,6 +724,18 @@ class Client:
         id = response.sentences[-1].attributes["ret"]
         ip_dns_record.id = id
 
+    async def set_ip_dns_record(self, ip_dns_record: IpDnsRecord):
+        """
+        Edits an IPV4 dns record to routeros
+        """
+        data = ip_dns_record.model_dump(
+            by_alias=True, exclude_none=True, exclude={"id"}
+        )
+        data = {"numbers": ip_dns_record.id, **data}
+        words = ["/ip/dns/static/set", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+
     async def set_ip_dns_record_comment(self, ip_dns_record: IpDnsRecord, comment: str):
         """
         Sets the comment for an IPV4 dns record
@@ -776,6 +800,18 @@ class Client:
         id = response.sentences[-1].attributes["ret"]
         ip_firewall_filter.id = id
 
+    async def set_ip_firewall_filter(self, ip_firewall_filter: IpFirewallFilter):
+        """
+        Edits an IPV4 firewall filter to routeros
+        """
+        data = ip_firewall_filter.model_dump(
+            by_alias=True, exclude_none=True, exclude={"id"}
+        )
+        data = {"numbers": ip_firewall_filter.id, **data}
+        words = ["/ip/firewall/filter/set", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+
     async def set_ip_firewall_filter_comment(
         self, ip_firewall_filter: IpFirewallFilter, comment: str
     ):
@@ -833,8 +869,22 @@ class Client:
         )
         words = ["/ip/firewall/address-list/add", *to_attribute_words(data)]
         response = await self.connection.send(*words)
+        response.raise_for_error()
         id = response.sentences[-1].attributes["ret"]
         ip_firewall_address_list.id = id
+
+    async def set_ip_firewall_address_list(
+        self, ip_firewall_address_list: IpFirewallAddressList
+    ):
+        """
+        Edits an IPV4 dns record to routeros
+        """
+        data = ip_firewall_address_list.model_dump(
+            by_alias=True, exclude_none=True, exclude={"id"}
+        )
+        data = {"numbers": ip_firewall_address_list.id, **data}
+        words = ["/ip/firewall/address-list/set", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
         response.raise_for_error()
 
     async def set_ip_firewall_address_list_comment(

@@ -255,6 +255,20 @@ async def test_integration_client_list_ip_dns():
 
 
 @integration_test
+async def test_integration_client_list_ip_firewall_address_lists():
+    client = client_from_json()
+    data = await client.list_ip_firewall_address_lists()
+    assert data is not None
+
+
+@integration_test
+async def test_integration_client_list_ip_firewall_filters():
+    client = client_from_json()
+    data = await client.list_ip_firewall_filters()
+    assert data is not None
+
+
+@integration_test
 async def test_integration_client_idle_monitor():
     client = client_from_json()
     client.connection.idle_timeout = datetime.timedelta(seconds=2)

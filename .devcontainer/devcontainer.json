@@ -2,6 +2,7 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "postCreateCommand": ".devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -21,6 +22,7 @@
         "[python]": {
           "editor.defaultFormatter": "ms-python.black-formatter"
         },
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
         "python.testing.pytestEnabled": true
       }
     }
