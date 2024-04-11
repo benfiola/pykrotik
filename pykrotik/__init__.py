@@ -50,6 +50,7 @@ class IpFirewallFilterAction(str, enum.Enum):
     AddDstToAddressList = "add-dst-to-address-list"
     AddSrcToAddressList = "add-src-to-address-list"
     Drop = "drop"
+    FasttrackConnection = "fasttrack-connection"
     Jump = "jump"
     Log = "log"
     Passthrough = "passthrough"
@@ -129,6 +130,16 @@ class IpFirewallDropFilter(BaseIpFirewallFilter):
     action: Literal[IpFirewallFilterAction.Drop] = IpFirewallFilterAction.Drop
 
 
+class IpFirewallFasttrackConnectionFilter(BaseIpFirewallFilter):
+    """
+    Firewall filter for a 'fasttrack-connection' action
+    """
+
+    action: Literal[IpFirewallFilterAction.FasttrackConnection] = (
+        IpFirewallFilterAction.FasttrackConnection
+    )
+
+
 class IpFirewallJumpFilter(BaseIpFirewallFilter):
     """
     Firewall filter for a 'jump' action
@@ -180,6 +191,7 @@ IpFirewallFilter = Annotated[
         IpFirewallAddDstToAddressListFilter,
         IpFirewallAddSrcToAddressListFilter,
         IpFirewallDropFilter,
+        IpFirewallFasttrackConnectionFilter,
         IpFirewallJumpFilter,
         IpFirewallPassthroughFilter,
         IpFirewallRejectFilter,
