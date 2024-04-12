@@ -250,21 +250,60 @@ def integration_test(func):
 @integration_test
 async def test_integration_client_list_ip_dns():
     client = client_from_json()
+    data = pykrotik.IpDnsRecord(
+        address="127.0.0.1",
+        disabled=True,
+        name="testing.local",
+        ttl="1d",
+        type=pykrotik.IpDnsRecordType.A,
+    )
+    await client.add_ip_dns_record(data)
+    await client.set_ip_dns_record_comment(data, "testing")
+    await client.delete_ip_dns_record(data)
     data = await client.list_ip_dns_records()
     assert data is not None
 
 
 @integration_test
-async def test_integration_client_list_ip_firewall_address_lists():
+async def test_integration_client_ip_firewall_address_lists():
     client = client_from_json()
+    data = pykrotik.IpFirewallAddressList(
+        address="127.0.0.1", list="testing", disabled=True
+    )
+    await client.add_ip_firewall_address_list(data)
+    await client.set_ip_firewall_address_list_comment(data, "testing")
+    await client.delete_ip_firewall_address_list(data)
     data = await client.list_ip_firewall_address_lists()
     assert data is not None
 
 
 @integration_test
-async def test_integration_client_list_ip_firewall_filters():
+async def test_integration_client_ip_firewall_filters():
     client = client_from_json()
+    data = pykrotik.IpFirewallFilter(
+        action=pykrotik.IpFirewallFilterAction.Passthrough,
+        chain="forward",
+        disabled=True,
+    )
+    await client.add_ip_firewall_filter(data)
+    await client.move_ip_firewall_filter(data, 1)
+    await client.set_ip_firewall_filter_comment(data, "testing")
+    await client.delete_ip_firewall_filter(data)
     data = await client.list_ip_firewall_filters()
+    assert data is not None
+
+
+@integration_test
+async def test_integration_client_ip_firewall_nat():
+    client = client_from_json()
+    data = pykrotik.IpFirewallNat(
+        action=pykrotik.IpFirewallNatAction.Passthrough, chain="dstnat", disabled=True
+    )
+    await client.add_ip_firewall_nat(data)
+    await client.move_ip_firewall_nat(data, 1)
+    await client.set_ip_firewall_nat_comment(data, "testing")
+    await client.delete_ip_firewall_nat(data)
+    data = await client.list_ip_firewall_nats()
     assert data is not None
 
 

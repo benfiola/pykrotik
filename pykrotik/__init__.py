@@ -41,6 +41,116 @@ class IpFirewallAddressList(BaseModel):
     timeout: int | None = pydantic.Field(default=None)
 
 
+class IpFirewallNatProtocol(str, enum.Enum):
+    """
+    List of protocols selectable when defining ip firewall nat rules
+    """
+
+    Dccp = "dccp"
+    Ddp = "ddp"
+    Egp = "egp"
+    Encap = "encap"
+    Etherip = "etherip"
+    Ggp = "ggp"
+    Gre = "gre"
+    Hmp = "hmp"
+    Icmp = "icmp"
+    IdprCmtp = "idpr-cmtp"
+    Igmp = "igmp"
+    IpEncap = "ip-encap"
+    Ipip = "ipip"
+    IpsecAh = "ipsec-ah"
+    IpsecEsp = "ipsec-esp"
+    Ipv6Encap = "ipv6-encap"
+    IsoTp4 = "iso-tp4"
+    L2tp = "l2tp"
+    Ospf = "ospf"
+    Pim = "pim"
+    Pup = "pup"
+    Rdp = "rdp"
+    Rspf = "rspf"
+    Rsvp = "rsvp"
+    Sctp = "sctp"
+    St = "st"
+    Tcp = "tcp"
+    Udp = "udp"
+    UdpLite = "udp-lite"
+    Vmtp = "vmtp"
+    Vrrp = "vrrp"
+    XnsIdp = "xns-idp"
+    Xtp = "xtp"
+
+
+class IpFirewallNatAction(str, enum.Enum):
+    """
+    Ip firewall nat actions supported by routeros
+    """
+
+    Accept = "accept"
+    AddDstToAddressList = "add-dst-to-address-list"
+    AddSrcToAddressList = "add-src-to-address-list"
+    DstNat = "dst-nat"
+    EndpointIndependentNat = "endpoint-independent-nat"
+    Jump = "jump"
+    Log = "log"
+    Masquerade = "masquerade"
+    Netmap = "netmap"
+    Passthrough = "passthrough"
+    Redirect = "redirect"
+    Return = "return"
+    Same = "same"
+    SrcNat = "src-nat"
+
+
+class IpFirewallNat(BaseModel):
+    """
+    Definition of an ip firewall nat
+    """
+
+    # the action the firewall filter will take
+    action: IpFirewallNatAction
+    # action-specific address list field
+    address_list: str | None = pydantic.Field(default=None, alias=str("address-list"))
+    # protocl-specific field representing a source/destination port
+    any_port: int | None = pydantic.Field(default=None, alias=str("any-port"))
+    # the chain the firewall filter belongs to
+    chain: str
+    # comment attached to the ip firewall filter
+    comment: str = pydantic.Field(default="")
+    # flag that dictates whether an ip firewall filter is active
+    disabled: bool = pydantic.Field(default=False)
+    # dst address for the firewall fitler
+    dst_address: str | None = pydantic.Field(default=None, alias=str("dst-address"))
+    # dst address list for the firewall fitler
+    dst_address_list: str | None = pydantic.Field(
+        default=None, alias=str("dst-address-list")
+    )
+    # protocl-specific field representing a destination port
+    dst_port: int | None = pydantic.Field(default=None, alias=str("dst-port"))
+    # the id for an ip firewall filter (NOTE: prefixed with '*')
+    id: str | None = pydantic.Field(default=None, alias=str(".id"))
+    # action-specific jump target
+    jump_target: str | None = pydantic.Field(default=None, alias=str("jump-target"))
+    # flag that dictates whether filter is logged
+    log: bool = pydantic.Field(default=False)
+    # log prefix for logged filter
+    log_prefix: str = pydantic.Field(default="", alias=str("log-prefix"))
+    # protocol for the nat filter
+    protocol: IpFirewallNatProtocol | None = pydantic.Field(default=None)
+    # src address for the firewall fitler
+    src_address: str | None = pydantic.Field(default=None, alias=str("src-address"))
+    # src address list for the firewall fitler
+    src_address_list: str | None = pydantic.Field(
+        default=None, alias=str("src-address-list")
+    )
+    # protocl-specific field representing a source port
+    src_port: int | None = pydantic.Field(default=None, alias=str("src-port"))
+    # action-specific field representing a target address
+    to_addresses: str | None = pydantic.Field(default=None, alias=str("to-addresses"))
+    # action-specific field representing a target port
+    to_ports: str | None = pydantic.Field(default=None, alias=str("to-ports"))
+
+
 class IpFirewallFilterAction(str, enum.Enum):
     """
     Ip firewall filter actions supported by routeros
@@ -59,11 +169,15 @@ class IpFirewallFilterAction(str, enum.Enum):
     Tarpit = "tarpit"
 
 
-class BaseIpFirewallFilter(BaseModel):
+class IpFirewallFilter(BaseModel):
     """
-    All ip firewall filters share a base set of fields - this base class is used to define all ip firewall filters
+    Definition of an ip firewall filter
     """
 
+    # action to be performed by this firewall filter
+    action: IpFirewallFilterAction
+    # action-specific address list field
+    address_list: str | None = pydantic.Field(default=None, alias=str("address-list"))
     # the chain the firewall filter belongs to
     chain: str
     # comment attached to the ip firewall filter
@@ -78,6 +192,8 @@ class BaseIpFirewallFilter(BaseModel):
     )
     # the id for an ip firewall filter (NOTE: prefixed with '*')
     id: str | None = pydantic.Field(default=None, alias=str(".id"))
+    # action-specific jump target
+    jump_target: str | None = pydantic.Field(default=None, alias=str("jump-target"))
     # flag that dictates whether filter is logged
     log: bool = pydantic.Field(default=False)
     # log prefix for logged filter
@@ -88,118 +204,6 @@ class BaseIpFirewallFilter(BaseModel):
     src_address_list: str | None = pydantic.Field(
         default=None, alias=str("src-address-list")
     )
-
-
-class IpFirewallAcceptFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for an 'accept' action
-    """
-
-    action: Literal[IpFirewallFilterAction.Accept] = IpFirewallFilterAction.Accept
-
-
-class IpFirewallAddDstToAddressListFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for an 'add-dst-to-address-list' action
-    """
-
-    # the address list to put the dst ip address
-    address_list: str = pydantic.Field(alias=str("address-list"))
-    action: Literal[IpFirewallFilterAction.AddDstToAddressList] = (
-        IpFirewallFilterAction.AddDstToAddressList
-    )
-
-
-class IpFirewallAddSrcToAddressListFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for an 'add-src-to-address-list' action
-    """
-
-    # the address list to put the src ip address
-    address_list: str = pydantic.Field(alias=str("address-list"))
-    action: Literal[IpFirewallFilterAction.AddSrcToAddressList] = (
-        IpFirewallFilterAction.AddSrcToAddressList
-    )
-
-
-class IpFirewallDropFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'drop' action
-    """
-
-    action: Literal[IpFirewallFilterAction.Drop] = IpFirewallFilterAction.Drop
-
-
-class IpFirewallFasttrackConnectionFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'fasttrack-connection' action
-    """
-
-    action: Literal[IpFirewallFilterAction.FasttrackConnection] = (
-        IpFirewallFilterAction.FasttrackConnection
-    )
-
-
-class IpFirewallJumpFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'jump' action
-    """
-
-    # the target chain to jump to
-    jump_target: str
-    action: Literal[IpFirewallFilterAction.Jump] = IpFirewallFilterAction.Jump
-
-
-class IpFirewallPassthroughFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'passthrough' action
-    """
-
-    action: Literal[IpFirewallFilterAction.Passthrough] = (
-        IpFirewallFilterAction.Passthrough
-    )
-
-
-class IpFirewallRejectFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'reject' action
-    """
-
-    action: Literal[IpFirewallFilterAction.Reject] = IpFirewallFilterAction.Reject
-
-
-class IpFirewallReturnFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'return' action
-    """
-
-    action: Literal[IpFirewallFilterAction.Return] = IpFirewallFilterAction.Return
-
-
-class IpFirewallTarpitFilter(BaseIpFirewallFilter):
-    """
-    Firewall filter for a 'tarpit' action
-    """
-
-    action: Literal[IpFirewallFilterAction.Tarpit] = IpFirewallFilterAction.Tarpit
-
-
-# annotated discriminating union to help with parsing ip firewall filter actions
-IpFirewallFilter = Annotated[
-    Union[
-        IpFirewallAcceptFilter,
-        IpFirewallAddDstToAddressListFilter,
-        IpFirewallAddSrcToAddressListFilter,
-        IpFirewallDropFilter,
-        IpFirewallFasttrackConnectionFilter,
-        IpFirewallJumpFilter,
-        IpFirewallPassthroughFilter,
-        IpFirewallRejectFilter,
-        IpFirewallReturnFilter,
-        IpFirewallTarpitFilter,
-    ],
-    pydantic.Discriminator("action"),
-]
 
 
 class IpDnsRecordType(str, enum.Enum):
@@ -218,129 +222,47 @@ class IpDnsRecordType(str, enum.Enum):
     TXT = "TXT"
 
 
-class BaseIpDnsRecord(BaseModel):
+class IpDnsRecord(BaseModel):
     """
     All ip records share a base set of fields - this base class is used to define all ip record modules
     """
 
+    # record-specific address field
+    address: str | None = pydantic.Field(default=None)
+    # record-specific cname field
+    cname: str | None = pydantic.Field(default=None)
     # comment attached to the ip dns record
     comment: str = pydantic.Field(default="")
     # flag that dictates whether an ip address record is active
     disabled: bool = pydantic.Field(default=False)
+    # record-specific forward to field
+    forward_to: str | None = pydantic.Field(default=None, alias=str("forward-to"))
     # the id for an ip address record (NOTE: prefixed with '*')
     id: str | None = pydantic.Field(default=None, alias=str(".id"))
     # rule that dictates whether a dns record matches subdomains
     match_subdomain: bool = pydantic.Field(default=False, alias=str("match-subdomain"))
+    # record-specific mx preference field
+    mx_preference: int | None = pydantic.Field(default=None, alias=str("mx-preference"))
+    # record-specific mx exchange field
+    mx_exchange: str | None = pydantic.Field(default=None, alias=str("mx-exchange"))
     # the name of the dns record
     name: str
+    # record-specific ns field
+    ns: str | None = pydantic.Field(default=None)
+    # record-specific srv port field
+    srv_port: int | None = pydantic.Field(default=None, alias=str("srv-port"))
+    # record-specific srv priority field
+    srv_priority: int | None = pydantic.Field(default=None, alias=str("srv-priority"))
+    # record-specific srv target field
+    srv_target: str | None = pydantic.Field(default=None, alias=str("srv-target"))
+    # record-specific srv weight field
+    srv_weight: int | None = pydantic.Field(default=None, alias=str("srv-weight"))
+    # record-specific text field
+    text: str | None = pydantic.Field(default=None)
     # the ttl of the dns record (represented as '1w1d1h1m1s')
     ttl: str
-
-
-class IpDnsARecord(BaseIpDnsRecord):
-    """
-    Models ip dns a record data returned from routeros
-    """
-
-    # the address the A record points to
-    address: str
-    type: Literal[IpDnsRecordType.A] = IpDnsRecordType.A
-
-
-class IpDnsAaaaRecord(BaseIpDnsRecord):
-    """
-    Models ip dns a record data returned from routeros
-    """
-
-    # the address the AAAA record points to
-    address: str
-    type: Literal[IpDnsRecordType.AAAA] = IpDnsRecordType.AAAA
-
-
-class IpDnsCnameRecord(BaseIpDnsRecord):
-    """
-    Models ip dns cname record data returned from routeros
-    """
-
-    # the cname for the record
-    cname: str
-    type: Literal[IpDnsRecordType.CNAME] = IpDnsRecordType.CNAME
-
-
-class IpDnsFwdRecord(BaseIpDnsRecord):
-    """
-    Models ip dns fwd record data returned from routeros
-    """
-
-    # the address the FWD record points to
-    forward_to: str = pydantic.Field(alias=str("forward-to"))
-    type: Literal[IpDnsRecordType.FWD] = IpDnsRecordType.FWD
-
-
-class IpDnsMxRecord(BaseIpDnsRecord):
-    """
-    Models ip dns mx record data returned from routeros
-    """
-
-    mx_preference: int = pydantic.Field(alias=str("mx-preference"))
-    mx_exchange: str = pydantic.Field(alias=str("mx-exchange"))
-    type: Literal[IpDnsRecordType.MX] = IpDnsRecordType.MX
-
-
-class IpDnsNsRecord(BaseIpDnsRecord):
-    """
-    Models ip dns ns record data returned from routeros
-    """
-
-    ns: str
-    type: Literal[IpDnsRecordType.NS] = IpDnsRecordType.NS
-
-
-class IpDnsNxdomainRecord(BaseIpDnsRecord):
-    """
-    Models ip dns nxdomain record data returned from routeros
-    """
-
-    type: Literal[IpDnsRecordType.NXDOMAIN] = IpDnsRecordType.NXDOMAIN
-
-
-class IpDnsSrvRecord(BaseIpDnsRecord):
-    """
-    Models ip dns srv record data returned from routeros
-    """
-
-    srv_port: int = pydantic.Field(alias=str("srv-port"))
-    srv_priority: int = pydantic.Field(alias=str("srv-priority"))
-    srv_target: str = pydantic.Field(alias=str("srv-target"))
-    srv_weight: int = pydantic.Field(alias=str("srv-weight"))
-    type: Literal[IpDnsRecordType.SRV] = IpDnsRecordType.SRV
-
-
-class IpDnsTxtRecord(BaseIpDnsRecord):
-    """
-    Models ip dns txt record data returned from routeros
-    """
-
-    # the text content for the record
-    text: str
-    type: Literal[IpDnsRecordType.TXT] = IpDnsRecordType.TXT
-
-
-# annotated discriminating union to help with parsing ip dns records
-IpDnsRecord = Annotated[
-    Union[
-        IpDnsARecord,
-        IpDnsAaaaRecord,
-        IpDnsCnameRecord,
-        IpDnsFwdRecord,
-        IpDnsMxRecord,
-        IpDnsNsRecord,
-        IpDnsNxdomainRecord,
-        IpDnsSrvRecord,
-        IpDnsTxtRecord,
-    ],
-    pydantic.Field(discriminator="type"),
-]
+    # the type of the dns record
+    type: IpDnsRecordType
 
 
 class Request:
@@ -853,6 +775,77 @@ class Client:
         """
         data = {"numbers": ip_firewall_filter.id, "destination": destination}
         words = ["/ip/firewall/filter/move", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+
+    async def list_ip_firewall_nats(self) -> list[IpFirewallNat]:
+        """
+        Lists IPV4 firewall nats registered with routeros
+        """
+        data = {"detail": None}
+        response = await self.connection.send(
+            "/ip/firewall/nat/print", *to_attribute_words(data)
+        )
+        response.raise_for_error()
+        model_cls = IpFirewallNat
+        raw = response.get_data()
+        data = list(map(model_cls.model_validate, raw))
+        return data
+
+    async def add_ip_firewall_nat(self, ip_firewall_nat: IpFirewallNat):
+        """
+        Adds an IPV4 firewall nat to routeros
+        """
+        data = ip_firewall_nat.model_dump(
+            by_alias=True, exclude_none=True, exclude={"id"}
+        )
+        words = ["/ip/firewall/nat/add", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+        id = response.sentences[-1].attributes["ret"]
+        ip_firewall_nat.id = id
+
+    async def set_ip_firewall_nat(self, ip_firewall_nat: IpFirewallNat):
+        """
+        Edits an IPV4 firewall nat to routeros
+        """
+        data = ip_firewall_nat.model_dump(
+            by_alias=True, exclude_none=True, exclude={"id"}
+        )
+        data = {"numbers": ip_firewall_nat.id, **data}
+        words = ["/ip/firewall/nat/set", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+
+    async def set_ip_firewall_nat_comment(
+        self, ip_firewall_nat: IpFirewallNat, comment: str
+    ):
+        """
+        Sets the comment for an IPV4 firewall nat
+        """
+        data = {"numbers": ip_firewall_nat.id, "comment": comment}
+        words = ["/ip/firewall/nat/comment", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+        ip_firewall_nat.comment = comment
+
+    async def delete_ip_firewall_nat(self, ip_firewall_nat: IpFirewallNat):
+        """
+        Deletes an IPV4 firewall nat registered with routeros by id
+        """
+        data = {"numbers": ip_firewall_nat.id}
+        words = ["/ip/firewall/nat/remove", *to_attribute_words(data)]
+        response = await self.connection.send(*words)
+        response.raise_for_error()
+
+    async def move_ip_firewall_nat(
+        self, ip_firewall_nat: IpFirewallNat, destination: int
+    ):
+        """
+        Moves an IPV4 firewall nat to the specified position
+        """
+        data = {"numbers": ip_firewall_nat.id, "destination": destination}
+        words = ["/ip/firewall/nat/move", *to_attribute_words(data)]
         response = await self.connection.send(*words)
         response.raise_for_error()
 
