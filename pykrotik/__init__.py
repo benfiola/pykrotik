@@ -112,7 +112,7 @@ class IpFirewallNat(BaseModel):
     # action-specific address list field
     address_list: str | None = pydantic.Field(default=None, alias=str("address-list"))
     # protocol-specific field representing a source/destination port
-    any_port: int | None = pydantic.Field(default=None, alias=str("any-port"))
+    any_port: str | None = pydantic.Field(default=None, alias=str("any-port"))
     # the chain the firewall filter belongs to
     chain: str
     # comment attached to the ip firewall filter
@@ -126,7 +126,7 @@ class IpFirewallNat(BaseModel):
         default=None, alias=str("dst-address-list")
     )
     # protocol-specific field representing a destination port
-    dst_port: int | None = pydantic.Field(default=None, alias=str("dst-port"))
+    dst_port: str | None = pydantic.Field(default=None, alias=str("dst-port"))
     # the id for an ip firewall filter (NOTE: prefixed with '*')
     id: str | None = pydantic.Field(default=None, alias=str(".id"))
     # action-specific jump target
@@ -144,7 +144,7 @@ class IpFirewallNat(BaseModel):
         default=None, alias=str("src-address-list")
     )
     # protocol-specific field representing a source port
-    src_port: int | None = pydantic.Field(default=None, alias=str("src-port"))
+    src_port: str | None = pydantic.Field(default=None, alias=str("src-port"))
     # action-specific field representing a target address
     to_addresses: str | None = pydantic.Field(default=None, alias=str("to-addresses"))
     # action-specific field representing a target port
@@ -179,7 +179,7 @@ class IpFirewallFilter(BaseModel):
     # action-specific address list field
     address_list: str | None = pydantic.Field(default=None, alias=str("address-list"))
     # protocol-specific field representing a source/destination port
-    any_port: int | None = pydantic.Field(default=None, alias=str("any-port"))
+    any_port: str | None = pydantic.Field(default=None, alias=str("any-port"))
     # the chain the firewall filter belongs to
     chain: str
     # comment attached to the ip firewall filter
@@ -193,7 +193,7 @@ class IpFirewallFilter(BaseModel):
         default=None, alias=str("dst-address-list")
     )
     # protocol-specific field representing a destination port
-    dst_port: int | None = pydantic.Field(default=None, alias=str("dst-port"))
+    dst_port: str | None = pydantic.Field(default=None, alias=str("dst-port"))
     # the id for an ip firewall filter (NOTE: prefixed with '*')
     id: str | None = pydantic.Field(default=None, alias=str(".id"))
     # action-specific jump target
@@ -205,7 +205,7 @@ class IpFirewallFilter(BaseModel):
     # protocol for the firewall filter
     protocol: IpFirewallProtocol | None = pydantic.Field(default=None)
     # protocol-specific field representing a source port
-    src_port: int | None = pydantic.Field(default=None, alias=str("src-port"))
+    src_port: str | None = pydantic.Field(default=None, alias=str("src-port"))
     # src address for the firewall fitler
     src_address: str | None = pydantic.Field(default=None, alias=str("src-address"))
     # src address list for the firewall fitler
