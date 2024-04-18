@@ -10,6 +10,7 @@ dev = [
     "build",
     "pytest",
     "pytest-asyncio",
+    "python-dotenv",
     "twine"
 ]
 

@@ -232,8 +232,8 @@ def test_to_api_attribute_fails_if_key_wrong_format():
 local_folder = pathlib.Path(__file__).parent.parent.joinpath("local")
 
 
-def client_from_json() -> pykrotik.Client:
-    settings_file = local_folder.joinpath("integration_test.json")
+def client_from_env() -> pykrotik.Client:
+    settings_file = local_folder.joinpath(".env")
     settings = json.loads(settings_file.read_text())
     client = pykrotik.Client(
         host=settings["host"],
@@ -249,7 +249,7 @@ def integration_test(func):
 
 @integration_test
 async def test_integration_client_list_ip_dns():
-    client = client_from_json()
+    client = client_from_env()
     data = pykrotik.IpDnsRecord(
         address="127.0.0.1",
         disabled=True,
@@ -266,7 +266,7 @@ async def test_integration_client_list_ip_dns():
 
 @integration_test
 async def test_integration_client_ip_firewall_address_lists():
-    client = client_from_json()
+    client = client_from_env()
     data = pykrotik.IpFirewallAddressList(
         address="127.0.0.1", list="testing", disabled=True
     )
@@ -279,7 +279,7 @@ async def test_integration_client_ip_firewall_address_lists():
 
 @integration_test
 async def test_integration_client_ip_firewall_filters():
-    client = client_from_json()
+    client = client_from_env()
     data = pykrotik.IpFirewallFilter(
         action=pykrotik.IpFirewallFilterAction.Passthrough,
         chain="forward",
@@ -295,7 +295,7 @@ async def test_integration_client_ip_firewall_filters():
 
 @integration_test
 async def test_integration_client_ip_firewall_nat():
-    client = client_from_json()
+    client = client_from_env()
     data = pykrotik.IpFirewallNat(
         action=pykrotik.IpFirewallNatAction.Passthrough, chain="dstnat", disabled=True
     )
@@ -309,7 +309,7 @@ async def test_integration_client_ip_firewall_nat():
 
 @integration_test
 async def test_integration_client_idle_monitor():
-    client = client_from_json()
+    client = client_from_env()
     client.connection.idle_timeout = datetime.timedelta(seconds=2)
     await client.list_ip_dns_records()
     assert client.connection.stream is not None
