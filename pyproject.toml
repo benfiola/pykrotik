@@ -1,15 +1,27 @@
 [project]
 name = "pykrotik"
-version = "0.0.8-rc.1"
-dependencies = [ "pydantic",]
+version = "0.0.0"
+dependencies = [ 
+    "pydantic"
+]
 
 [project.optional-dependencies]
-dev = [ "build", "pytest", "pytest-asyncio", "python-dotenv", "python-semantic-release", "toml", "twine",]
+dev = [ 
+    "build", 
+    "pytest", 
+    "pytest-asyncio", 
+    "python-dotenv", 
+    "python-semantic-release", 
+    "toml", 
+    "twine"
+]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
 asyncio_mode = "auto"
-testpaths = [ "tests",]
+testpaths = [ 
+    "tests"
+]
 
 [tool.semantic_release.branches.dev]
 match = "dev"
@@ -21,4 +33,6 @@ match = "main"
 prerelease = false
 
 [tool.setuptools.packages.find]
-include = [ "pykrotik",]
+include = [
+    "pykrotik"
+]
