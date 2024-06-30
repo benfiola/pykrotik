@@ -8,6 +8,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [ 
     "build", 
+    "packaging",
     "pytest", 
     "pytest-asyncio", 
     "python-dotenv", 
