@@ -2,6 +2,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
   "postCreateCommand": ".devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
@@ -23,7 +26,22 @@
           "editor.defaultFormatter": "ms-python.black-formatter"
         },
         "python.defaultInterpreterPath": "/usr/local/bin/python3",
-        "python.testing.pytestEnabled": true
+        "python.testing.pytestEnabled": true,
+        "launch": {
+          "version": "0.2.0",
+          "configurations": [
+            {
+              "name": "Python: dev.py",
+              "type": "debugpy",
+              "request": "launch",
+              "program": "${workspaceFolder}/dev.py",
+              "cwd": "${workspaceFolder}",
+              "purpose": ["debug-test"],
+              "console": "integratedTerminal",
+              "justMyCode": false
+            }
+          ]
+        }
       }
     }
   }

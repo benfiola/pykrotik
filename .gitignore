@@ -4,5 +4,6 @@ dist
 .pytest_cache
 .vscode
 /*.py
+!/dev.template.py
 !/setup.py
 *.env
