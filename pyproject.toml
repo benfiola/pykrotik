@@ -6,15 +6,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [ 
-    "build", 
-    "packaging",
+dev = [
+    "bfiola-devtools",
     "pytest", 
     "pytest-asyncio", 
     "python-dotenv", 
-    "python-semantic-release", 
-    "toml", 
-    "twine"
 ]
 
 [tool.pytest.ini_options]
