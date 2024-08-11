@@ -1,11 +1,4 @@
 {
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
-  "postCreateCommand": ".devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -25,7 +18,7 @@
         "[python]": {
           "editor.defaultFormatter": "ms-python.black-formatter"
         },
-        "python.defaultInterpreterPath": "/usr/local/bin/python3",
+        "python.defaultInterpreterPath": "/venv/bin/python3",
         "python.testing.pytestEnabled": true,
         "launch": {
           "version": "0.2.0",
@@ -44,5 +37,13 @@
         }
       }
     }
-  }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.10.12"
+    }
+  },
+  "image": "ubuntu:latest",
+  "postCreateCommand": ".devcontainer/post-create.sh"
 }

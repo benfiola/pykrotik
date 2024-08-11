@@ -6,11 +6,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "bfiola-devtools",
+dev = [ 
+    "black",
+    "build", 
     "pytest", 
     "pytest-asyncio", 
-    "python-dotenv", 
+    "twine"
 ]
 
 [tool.pytest.ini_options]
@@ -19,15 +20,6 @@ asyncio_mode = "auto"
 testpaths = [ 
     "tests"
 ]
-
-[tool.semantic_release.branches.dev]
-match = "dev"
-prerelease = true
-prerelease_token = "rc"
-
-[tool.semantic_release.branches.main]
-match = "main"
-prerelease = false
 
 [tool.setuptools.packages.find]
 include = [
