@@ -20,6 +20,17 @@ class BaseModel(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(populate_by_name=True)
 
 
+class IpAddress(BaseModel):
+    # the ip address
+    address: str
+    # comment attached to the ip address
+    comment: str = pydantic.Field(default="")
+    # the network the address belongs to
+    network: str
+    # the interface the address is attached to
+    interface: str
+
+
 class IpFirewallAddressList(BaseModel):
     # NOTE: Address list is a misnomer - these are individual addresses.  Those with a common 'list' field belong to the same list.
 
@@ -652,6 +663,20 @@ class Client:
 
     def __init__(self, *, host: str, password: str, username: str):
         self.connection = Connection(host=host, password=password, username=username)
+
+    async def list_ip_addresses(self) -> list[IpAddress]:
+        """
+        Lists IP addresses attached to interfaces
+        """
+        data = {"detail": None}
+        response = await self.connection.send(
+            "/ip/address/print", *to_attribute_words(data)
+        )
+        response.raise_for_error()
+        model_cls: pydantic.TypeAdapter[IpAddress] = pydantic.TypeAdapter(IpAddress)
+        raw = response.get_data()
+        data = list(map(model_cls.validate_python, raw))
+        return data
 
     async def add_ip_dns_record(self, ip_dns_record: IpDnsRecord):
         """

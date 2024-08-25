@@ -41,7 +41,7 @@ From the project root, run the following to create a routeros docker container t
 
 ```shell
 cd /workspaces/pykrotik
-./scripts/dev.sh
+./dev/create-router.sh
 ```
 
 This will:
